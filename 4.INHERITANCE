@@ -1,0 +1,113 @@
+Aim:
+To handle inheritance in Java using extends, super and method overriding, and to observe run-time
+polymorphism.
+Algorithm
+1. Start.
+2. Write class Person with a name field, a constructor and show().
+3. Write class Employee extends Person, calling super(n) as the first line of its constructor.
+4. Override show() in Employee: call super.show() first, then print the salary.
+5. Write class Manager extends Employee to obtain multilevel inheritance, overriding show() again.
+6. In main, declare the variable as Person but create a Manager object.
+7. Call show() and observe that all three levels print.
+8. Stop.
+Program 4.1 — InheritDemo.java (22 lines)
+Program 4.1 — InheritDemo.java (22 lines)
+// Ex 4: multilevel inheritance, super and overriding
+class Person {
+String name;
+Person(String n) { name = n; }
+void show() { System.out.println("Name : " + name); }
+}
+class Employee extends Person {
+double salary;
+Employee(String n, double s) { super(n); salary = s; }
+Page 19 of 62
+
+SCSVMV University | Department of Computer Science and Engineering | Java Programming Laboratory
+void show() { super.show(); System.out.println("Salary : " + salary); }
+}
+class Manager extends Employee {
+String dept;
+Manager(String n, double s, String d) { super(n, s); dept = d; }
+void show() { super.show(); System.out.println("Dept : " + dept); }
+}
+public class InheritDemo {
+public static void main(String[] args) {
+Person p = new Manager("Meena", 75000, "CSE");
+p.show();
+}
+}
+Output
+Name : Meena
+Salary : 75000.0
+Dept : CSE
+Program 4.2 — Hierarchical inheritance (19 lines)
+// Ex 4: one parent, three children, one array
+class Staff {
+String name;
+Staff(String n) { name = n; }
+String role() { return "Staff"; }
+}
+class Teacher extends Staff {
+Teacher(String n) { super(n); }
+String role() { return "Teacher"; }
+}
+class Driver extends Staff {
+Driver(String n) { super(n); }
+String role() { return "Driver"; }
+}
+public class RoleDemo {
+public static void main(String[] args) {
+Staff[] all = { new Teacher("Kumar"), new Driver("Selvam"), new Staff("Raj") };
+for (Staff s : all)
+System.out.println(s.name + " -> " + s.role());
+}
+}
+Output
+Kumar -> Teacher
+Selvam -> Driver
+Raj -> Staff
+Case Study 4 — Salary Slip for Different Employee Types
+Problem. A manager, an engineer and an intern are paid by different rules. Print one salary slip for all of them
+using a single loop.
+Requirements. An abstract parent that forces every child to supply pay(), and one array holding all three.
+Solution — SalarySlip.java (24 lines)
+// Case Study 4: abstract parent + three pay rules
+abstract class Emp {
+
+Page 20 of 62
+
+SCSVMV University | Department of Computer Science and Engineering | Java Programming Laboratory
+
+String name;
+double basic;
+Emp(String n, double b) { name = n; basic = b; }
+abstract double pay(); // every child MUST write this
+}
+class Manager extends Emp {
+Manager(String n, double b) { super(n, b); }
+double pay() { return basic + 0.40 * basic; }
+}
+class Engineer extends Emp {
+Engineer(String n, double b) { super(n, b); }
+double pay() { return basic + 0.20 * basic; }
+}
+class Intern extends Emp {
+Intern(String n, double b) { super(n, b); }
+double pay() { return basic; }
+}
+public class SalarySlip {
+public static void main(String[] args) {
+Emp[] e = { new Manager("Meena", 50000), new Engineer("Ravi", 40000),
+new Intern("Anu", 12000) };
+for (Emp x : e)
+System.out.printf("%-8s %10.2f%n", x.name, x.pay());
+}
+}
+Output
+Meena 70000.00
+Ravi 48000.00
+Anu 12000.00
+Result:
+Single, multilevel and hierarchical inheritance with super, overriding and dynamic method dispatch were
+implemented and verified.
