@@ -1,0 +1,113 @@
+Aim
+To create threads in a Java application by extending Thread and by implementing Runnable, and to run several
+threads together with proper synchronisation.
+// Ex 5(a): the two ways of creating a thread
+class First extends Thread {
+public void run() {
+for (int i = 1; i <= 3; i++)
+System.out.println("Thread A : " + i);
+}
+}
+class Second implements Runnable {
+public void run() {
+for (int i = 1; i <= 3; i++)
+System.out.println("Thread B : " + i);
+}
+}
+public class ThreadDemo {
+public static void main(String[] args) {
+First a = new First();
+Thread b = new Thread(new Second());
+a.start();
+b.start();
+}
+
+
+
+SCSVMV University | Department of Computer Science and Engineering | Java Programming Laboratory
+
+}
+Output (the order may differ every run — that is normal)
+Thread A : 1
+Thread B : 1
+Thread A : 2
+Thread B : 2
+Thread B : 3
+Thread A : 3
+5(b) Multithreading with Synchronisation
+Algorithm
+1. Start.
+2. Write a Counter class with a private count and a synchronized increment().
+3. In main create one Counter shared by both threads.
+4. Write a Runnable that increments 10000 times.
+5. Create two threads from the same Runnable and start both.
+6. Call join() on both so main waits for them to finish.
+7. Print the final count; it must be exactly 20000.
+8. Stop.
+Program 5.2 — SyncDemo.java (19 lines)
+// Ex 5(b): synchronized protects the shared counter
+class Counter {
+private int count = 0;
+synchronized void increment() { count++; }
+int get() { return count; }
+}
+public class SyncDemo {
+public static void main(String[] args) throws InterruptedException {
+Counter c = new Counter();
+Runnable job = () -> {
+for (int i = 0; i < 10000; i++)
+c.increment();
+};
+Thread t1 = new Thread(job);
+Thread t2 = new Thread(job);
+t1.start(); t2.start();
+t1.join(); t2.join();
+System.out.println("Final count = " + c.get());
+}
+}
+Output
+With synchronized : Final count = 20000 (always correct)
+Now delete the word synchronized and run again:
+Without synchronized : Final count = 17342 (wrong, and different each time)
+Case Study 5 — Ticket Booking Counter
+Problem. Ten seats are left. Three booking counters try to sell them at the same time. Without a lock, the same
+seat gets sold twice and the count goes negative.
+Requirements. One shared seat count, three threads, a synchronized book() method, and no seat sold twice.
+Solution — Booking.java (24 lines)
+// Case Study 5: three counters selling from one pool of seats
+class Seats {
+private int available = 10;
+synchronized void book(String counter) {
+if (available > 0) {
+available--;
+System.out.println(counter + " booked seat. Left = " + available);
+} else {
+System.out.println(counter + " -> HOUSE FULL");
+}
+}
+}
+public class Booking {
+public static void main(String[] args) {
+Seats s = new Seats();
+for (int i = 1; i <= 3; i++) {
+String name = "Counter-" + i;
+new Thread(() -> {
+for (int j = 0; j < 4; j++)
+s.book(name);
+}).start();
+}
+}
+}
+Output (order varies, but the numbers never repeat and never go below zero)
+Counter-1 booked seat. Left = 9
+Counter-2 booked seat. Left = 8
+Counter-3 booked seat. Left = 7
+Counter-1 booked seat. Left = 6
+...
+Counter-2 booked seat. Left = 0
+Counter-3 -> HOUSE FULL
+Counter-1 -> HOUSE FULL
+Result
+Threads were created by both methods, run concurrently, and made safe with synchronisation; the incorrect
+result without synchronisation was observed and recorded.
+
