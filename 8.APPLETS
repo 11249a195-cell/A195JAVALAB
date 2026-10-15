@@ -1,0 +1,150 @@
+Aim:
+To write a simple applet that draws text and shapes, and an applet that works as a colour palette.
+8(a) Simple Applet
+Algorithm
+1. Start.
+2. Import java.applet.Applet and java.awt.*.
+3. Write a class that extends Applet.
+4. In init() set the background colour.
+5. In paint() set a colour and draw a string, an oval and a rectangle.
+6. Write an HTML file with an applet tag naming the class file.
+7. Compile with javac and run with appletviewer.
+8. Stop.
+Program 8.1 — HelloApplet.java (15 lines)
+// Ex 8(a): simple applet that draws text and shapes
+import java.applet.Applet;
+
+Page 34 of 62
+
+SCSVMV University | Department of Computer Science and Engineering | Java Programming Laboratory
+
+import java.awt.*;
+public class HelloApplet extends Applet {
+public void init() {
+setBackground(Color.WHITE);
+}
+public void paint(Graphics g) {
+g.setColor(Color.BLUE);
+g.drawString("Welcome to SCSVMV", 30, 25);
+g.setColor(Color.RED);
+g.fillOval(30, 45, 60, 60);
+g.setColor(Color.GREEN);
+g.fillRect(110, 45, 80, 60);
+}
+}
+HelloApplet.html (3 lines)
+<html><body>
+<applet code="HelloApplet.class" width="300" height="140"></applet>
+</body></html>
+Running it
+D:\JavaLab\Ex8> javac HelloApplet.java
+D:\JavaLab\Ex8> appletviewer HelloApplet.html
+A window appears showing:
+Welcome to SCSVMV
+a red circle beside a green rectangle
+Program 8.2 — Life cycle in four lines of printing (16 lines)
+// Ex 8(a): watch the order of the life-cycle methods on the console
+import java.applet.Applet;
+import java.awt.Graphics;
+public class LifeCycle extends Applet {
+public void init() { System.out.println("init()"); }
+public void start() { System.out.println("start()"); }
+public void stop() { System.out.println("stop()"); }
+public void destroy() { System.out.println("destroy()"); }
+public void paint(Graphics g) {
+System.out.println("paint()");
+g.drawString("Minimise and restore this window", 20, 30);
+}
+}
+Console output
+init()
+start()
+paint()
+stop() <- window minimised
+start() <- window restored
+paint()
+stop() <- window closed
+destroy()
+8(b) Colour Palette
+Program 8.3 — Palette.java (25 lines)
+// Ex 8(b): click a colour box, the big box below changes
+import java.applet.Applet;
+import java.awt.*;
+import java.awt.event.*;
+public class Palette extends Applet {
+Color[] c = { Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW };
+int sel = 0;
+public void init() {
+addMouseListener(new MouseAdapter() {
+public void mouseClicked(MouseEvent e) {
+int i = (e.getX() - 20) / 60;
+if (e.getY() < 60 && i >= 0 && i < 4) sel = i;
+repaint();
+}
+});
+}
+public void paint(Graphics g) {
+for (int i = 0; i < c.length; i++) {
+g.setColor(c[i]);
+g.fillRect(20 + i * 60, 20, 50, 40);
+}
+g.setColor(c[sel]);
+g.fillRect(20, 90, 230, 60);
+}
+}
+Palette.html and output
+<html><body>
+<applet code="Palette.class" width="290" height="180"></applet>
+</body></html>
++--------------------------------------------+
+| [RED] [GREEN] [BLUE] [YELLOW] |
+| |
+| +--------------------------------------+ |
+| | big box, filled with the colour | |
+| | you clicked | |
+| +--------------------------------------+ |
++--------------------------------------------+
+Case Study 8 — Bar Chart of Marks
+Problem. Draw a bar chart of five subject marks. Each bar's height must be proportional to the mark, and
+clicking a bar should print its value on the screen.
+Solution — BarChart.java (25 lines)
+// Case Study 8: a simple bar chart applet
+import java.applet.Applet;
+import java.awt.*;
+import java.awt.event.*;
+public class BarChart extends Applet {
+
+Page 36 of 62
+
+SCSVMV University | Department of Computer Science and Engineering | Java Programming Laboratory
+
+int[] marks = { 78, 91, 45, 66, 88 };
+String msg = "Click a bar";
+public void init() {
+addMouseListener(new MouseAdapter() {
+public void mouseClicked(MouseEvent e) {
+int i = (e.getX() - 20) / 50;
+if (i >= 0 && i < 5) msg = "Subject " + (i + 1) + " = " + marks[i];
+repaint();
+}
+});
+}
+public void paint(Graphics g) {
+g.drawString(msg, 20, 20);
+for (int i = 0; i < marks.length; i++) {
+g.setColor(marks[i] >= 50 ? Color.GREEN : Color.RED);
+g.fillRect(20 + i * 50, 150 - marks[i], 40, marks[i]);
+}
+}
+}
+Output
+Subject 2 = 91
+#
+# # # #
+# # # # #
+# # # # # green bars = pass, red bar = fail
+# # R # #
+1 2 3 4 5
+Result
+Simple applets demonstrating the life cycle, graphics drawing and a clickable colour palette were written and
+executed with appletviewer.
