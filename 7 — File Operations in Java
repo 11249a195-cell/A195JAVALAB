@@ -1,0 +1,94 @@
+Aim:
+To write data to a text file and read it back, and to process the data read from the file.
+Algorithm
+1. Start.
+2. Open student.txt with a FileWriter inside try-with-resources.
+3. Write three comma-separated lines and close automatically.
+4. Open the same file with a BufferedReader wrapped around a FileReader.
+5. Read line by line with readLine() until it returns null.
+6. Split each line at the comma and print the parts in columns.
+7. Catch IOException and print a clear message.
+8. Stop.
+// Ex 7: writing to a text file
+import java.io.FileWriter;
+import java.io.IOException;
+public class WriteFile {
+public static void main(String[] args) {
+try (FileWriter fw = new FileWriter("student.txt")) {
+fw.write("101,Aravind,78\n");
+fw.write("102,Divya,91\n");
+fw.write("103,Karthik,45\n");
+System.out.println("File written successfully.");
+} catch (IOException e) {
+System.out.println("Error : " + e.getMessage());
+Page 31 of 62
+
+SCSVMV University | Department of Computer Science and Engineering | Java Programming Laboratory
+
+}
+}
+}
+// Ex 7: writing to a text file
+import java.io.FileWriter;
+import java.io.IOException;
+public class WriteFile {
+public static void main(String[] args) {
+try (FileWriter fw = new FileWriter("student.txt")) {
+fw.write("101,Aravind,78\n");
+fw.write("102,Divya,91\n");
+fw.write("103,Karthik,45\n");
+System.out.println("File written successfully.");
+} catch (IOException e) {
+System.out.println("Error : " + e.getMessage());
+Page 31 of 62
+
+
+
+}
+}
+}
+Case Study 7 — Result Report from a File
+Problem. Read the marks file, count how many passed and failed, find the class average, and write a small
+report to result.txt.
+Solution — ResultReport.java (25 lines)
+// Case Study 7: read a file, process it, write a report
+import java.io.*;
+public class ResultReport {
+public static void main(String[] args) {
+int pass = 0, fail = 0, total = 0, n = 0;
+try (BufferedReader br = new BufferedReader(new FileReader("student.txt"));
+PrintWriter pw = new PrintWriter("result.txt")) {
+String line;
+while ((line = br.readLine()) != null) {
+String[] f = line.split(",");
+int m = Integer.parseInt(f[2]);
+total = total + m;
+n++;
+if (m >= 50) { pass++; pw.println(f[1] + " PASS"); }
+
+
+
+
+else { fail++; pw.println(f[1] + " FAIL"); }
+}
+pw.println("Passed : " + pass);
+pw.println("Failed : " + fail);
+pw.printf ("Average : %.2f%n", (double) total / n);
+System.out.println("result.txt created. Passed " + pass + ", failed " + fail);
+} catch (IOException e) {
+System.out.println("File error : " + e.getMessage());
+}
+}
+}
+Output
+result.txt created. Passed 2, failed 1
+Contents of result.txt:
+Aravind PASS
+Divya PASS
+Karthik FAIL
+Passed : 2
+Failed : 1
+Average : 71.33
+Result
+Data was written to a text file, read back, processed and written out as a report; all file exceptions were
+handled.
